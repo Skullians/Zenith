@@ -9,8 +9,8 @@ publishing {
             url = uri("https://repo.skullian.com/releases")
 
             credentials {
-                username = System.getenv("repository_username")
-                password = System.getenv("repository_password")
+                username = properties["repo_username"]?.toString() ?: System.getenv("repository_username")
+                password = properties["repo-password"]?.toString() ?: System.getenv("repository_password")
             }
         }
     }
