@@ -3,15 +3,27 @@ plugins {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "skullians-public"
-            url = uri("https://repo.skullian.com/releases")
+    repositories.configureRepository()
+}
 
+fun RepositoryHandler.configureRepository() {
+    val user: String? = properties["repository_username"]?.toString() ?: System.getenv("repository_username")
+    val pw: String? = properties["repository_password"]?.toString() ?: System.getenv("repository_password")
+
+    if (user != null && pw != null) {
+        maven("https://repo.skullian.com/releases/") {
+            name = "skullian-releases"
             credentials {
-                username = properties["repo_username"]?.toString() ?: System.getenv("repository_username")
-                password = properties["repo-password"]?.toString() ?: System.getenv("repository_password")
+                username = user
+                password = pw
             }
         }
+
+        return
+    }
+
+    println("Using repository without credentials.")
+    maven("https://repo.skullian.com/releases/") {
+        name = "skullian-releases"
     }
 }

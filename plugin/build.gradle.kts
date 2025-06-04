@@ -13,7 +13,7 @@ plugins {
     `java-gradle-plugin`
 }
 
-group = rootProject.group
+group = "net.skullian.zenith"
 version = property("version") as String
 
 repositories {
@@ -30,23 +30,15 @@ kotlin {
 }
 
 tasks {
-    withType<ShadowJar> {
-        archiveClassifier.set("")
-        exclude(
-            "**/*.kotlin_metadata",
-            "**/*.kotlin_builtins",
-            "META-INF/",
-            "kotlin/**",
-        )
-
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    shadowJar {
+        archiveClassifier = ""
     }
 
     build {
         dependsOn(shadowJar)
     }
 
-    withType<Jar> {
+    jar {
         manifest {
             attributes(
                 "Implementation-Version" to version,
@@ -71,17 +63,24 @@ gradlePlugin {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "skullians-public"
-            url = uri("https://repo.skullian.com/releases")
+    repositories.configureRepository()
+}
 
+fun RepositoryHandler.configureRepository() {
+    val user: String? = properties["repository_username"]?.toString() ?: System.getenv("repository_username")
+    val pw: String? = properties["repository_password"]?.toString() ?: System.getenv("repository_password")
+
+    if (user != null && pw != null) {
+        maven("https://repo.skullian.com/releases/") {
+            name = "skullian-releases"
             credentials {
-                username = System.getenv("repository_username")
-                password = System.getenv("repository_password")
+                username = user
+                password = pw
             }
         }
-    }
+
+        return
+    } else throw IllegalArgumentException("Missing credentials for repository.")
 }
 
 sourceSets.main {
@@ -89,3 +88,4 @@ sourceSets.main {
         property("zenithVersion", version.toString())
     }
 }
+
