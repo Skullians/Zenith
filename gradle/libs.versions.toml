@@ -1,0 +1,34 @@
+[versions]
+library-version = "1.0.0"
+
+kotlin = "2.1.21"
+kotlinx-coroutines = "1.10.1"
+
+# Plugins
+shadow = "9.0.0-beta15"
+dokka = "2.0.0"
+ktlint-gradle = "12.2.0"
+ktlint = "1.5.0"
+blossom = "2.1.0"
+gradle-publish = "1.3.1"
+
+
+[libraries]
+plugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
+plugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+plugin-kotlin-serialization = { module = "org.jetbrains.kotlin.plugin.serialization:org.jetbrains.kotlin.plugin.serialization.gradle.plugin", version.ref = "kotlin" }
+plugin-ktlint = { module = "org.jlleitschuh.gradle.ktlint:org.jlleitschuh.gradle.ktlint.gradle.plugin", version.ref = "ktlint-gradle" }
+
+kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
+
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+
+
+[plugins]
+blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish" }
+
+[bundles]
+kotlin-plugin = [ "kotlin-plugin", "kotlin-plugin-api" ]
