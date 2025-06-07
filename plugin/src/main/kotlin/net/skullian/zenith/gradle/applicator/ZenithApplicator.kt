@@ -68,6 +68,5 @@ public object ZenithApplicator {
                 yamlTask.get().run()
             }
         }
-
     }
 }

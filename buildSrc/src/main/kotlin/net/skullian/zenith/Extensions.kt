@@ -1,9 +1,9 @@
 package net.skullian.zenith
 
-abstract class ZenithExtension {
+abstract class Zenith {
     internal val dependencies: MutableList<String> = mutableListOf()
 
-    fun dependencies(vararg modules: String) {
+    fun modules(vararg modules: String) {
         this.dependencies.addAll(modules)
     }
 }

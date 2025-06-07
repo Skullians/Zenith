@@ -1,5 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import net.skullian.zenith.ZenithExtension
+import net.skullian.zenith.Zenith
 
 plugins {
     id("com.gradleup.shadow")
@@ -11,8 +11,6 @@ plugins {
 
 group = rootProject.group
 version = rootProject.version
-
-//val libs = the<LibrariesForLibs>()
 
 repositories {
     mavenCentral()
@@ -63,10 +61,10 @@ publishing {
     }
 }
 
-extensions.create("zenith", ZenithExtension::class)
+extensions.create("zenith", Zenith::class)
 
 afterEvaluate {
-    val extension = the<ZenithExtension>()
+    val extension = the<Zenith>()
 
     dependencies {
         extension.dependencies.forEach { dependency ->

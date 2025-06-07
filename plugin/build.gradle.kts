@@ -1,6 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.kotlin.dsl.withType
-
 // Gradle plugin modules don't like libs or buildSrc conventions
 plugins {
     id("com.gradleup.shadow") version "9.0.0-beta15"
@@ -47,6 +44,7 @@ tasks {
     }
 }
 
+
 gradlePlugin {
     website = "https://github.com/Skullians/Zenith"
     vcsUrl = "https://github.com/Skullians/Zenith"
@@ -80,7 +78,9 @@ fun RepositoryHandler.configureRepository() {
         }
 
         return
-    } else throw IllegalArgumentException("Missing credentials for repository.")
+    } else {
+        throw IllegalArgumentException("Missing credentials for repository.")
+    }
 }
 
 sourceSets.main {
