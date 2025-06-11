@@ -1,5 +1,6 @@
 package net.skullian.zenith.gradle.applicator
 
+import net.skullian.zenith.gradle.extension.ZenithExtension
 import net.skullian.zenith.gradle.extension.ZenithExtension.Companion.zenith
 import net.skullian.zenith.gradle.extension.deps.ZenithDependencies
 import net.skullian.zenith.gradle.extension.deps.ZenithDepsExtension
@@ -18,12 +19,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 public object ZenithApplicator {
     public fun apply(project: Project): Unit =
         with(project) {
+            extensions.create("zenith", ZenithExtension::class.java)
             dependencies.extensions.create("zenith", ZenithDepsExtension::class.java, project)
             configurations.create("zenithLibrary")
 
             repositories.mavenCentral()
             repositories.gradlePluginPortal()
-            repositories.maven(ZenithRepositories.SKULLIANS)
+            repositories.maven(ZenithRepositories.SKULLIANS.url)
 
             afterEvaluate(::eval)
         }

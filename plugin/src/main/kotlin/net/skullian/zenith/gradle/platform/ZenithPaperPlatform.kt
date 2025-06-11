@@ -13,7 +13,7 @@ public object ZenithPaperPlatform {
         internals: Boolean = false,
         project: Project,
     ) {
-        project.repositories.maven(ZenithRepositories.PAPER)
+        project.repositories.maven(ZenithRepositories.PAPER.url)
         val paperVersion = "$version-R0.1-SNAPSHOT"
 
         if (internals) {
