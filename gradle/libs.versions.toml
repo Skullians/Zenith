@@ -10,7 +10,7 @@ shadow = "9.0.0-beta15"
 dokka = "2.0.0"
 blossom = "2.1.0"
 gradle-publish = "1.3.1"
-paperweight = "2.0.0-beta.17"
+paperweight = "2.0.0-SNAPSHOT"
 
 [libraries]
 plugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
