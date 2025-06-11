@@ -23,7 +23,6 @@ public object ZenithApplicator {
 
             repositories.mavenCentral()
             repositories.gradlePluginPortal()
-            repositories.maven(ZenithRepositories.PAPER)
             repositories.maven(ZenithRepositories.SKULLIANS)
 
             afterEvaluate(::eval)
@@ -42,7 +41,7 @@ public object ZenithApplicator {
 
         val dependencyTaskName = "generateDependencies" + compilation.name.capitalized()
         val dependencyTaskOutput = compilation.output.resourcesDir.resolve("zenith-dependencies.json")
-        val dependencyTask = project.tasks.register(dependencyTaskName, DepsGeneration::class.java,  dependencyTaskOutput)
+        val dependencyTask = project.tasks.register(dependencyTaskName, DepsGeneration::class.java, dependencyTaskOutput)
 
         val yamlTaskName = "filterYaml" + compilation.name.capitalized()
         val yamlTask = project.tasks.register(yamlTaskName, YamlFiltering::class.java, compilation)

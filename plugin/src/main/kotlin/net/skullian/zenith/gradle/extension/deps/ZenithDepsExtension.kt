@@ -1,5 +1,6 @@
 package net.skullian.zenith.gradle.extension.deps
 
+import net.skullian.zenith.gradle.platform.ZenithPaperPlatform
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ExternalModuleDependencyBundle
@@ -7,7 +8,7 @@ import org.gradle.api.provider.Provider
 import javax.inject.Inject
 
 public abstract class ZenithDepsExtension @Inject constructor(
-    private val project: Project
+    private val project: Project,
 ) {
     /**
      * Adds the provided [notation] for a dependency as a zenith and compileOnly library
@@ -19,7 +20,7 @@ public abstract class ZenithDepsExtension @Inject constructor(
     }
 
     /**
-     * Adds the specified [provider] for a dependency as a zenith and compileOnly library]
+     * Adds the specified [provider] for a dependency as a zenith and compileOnly library
      */
     public fun runtimeProvider(provider: Provider<out ExternalModuleDependency>) {
         project.dependencies.add("zenithLibrary", provider)
@@ -33,5 +34,12 @@ public abstract class ZenithDepsExtension @Inject constructor(
     public fun runtimeProvider(bundleProvider: Provider<out ExternalModuleDependencyBundle>) {
         project.dependencies.add("zenithLibrary", bundleProvider)
         project.dependencies.add("compileOnly", bundleProvider)
+    }
+
+    public fun paper(
+        version: String,
+        internals: Boolean = false,
+    ) {
+        ZenithPaperPlatform.apply(version, internals, project)
     }
 }

@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     implementation(libs.bundles.kotlin.plugin)
+    implementation(libs.plugin.gradle.paperweight)
 }
 
 kotlin {

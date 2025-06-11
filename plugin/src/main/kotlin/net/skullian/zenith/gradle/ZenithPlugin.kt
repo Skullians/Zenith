@@ -1,6 +1,7 @@
 package net.skullian.zenith.gradle
 
 import net.skullian.zenith.gradle.applicator.ZenithApplicator
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
@@ -18,6 +19,10 @@ public class ZenithPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun getPluginArtifact(): SubpluginArtifact {
         return SubpluginArtifact("net.skullian.zenith", "plugin", javaClass.`package`.implementationVersion)
+    }
+
+    override fun apply(target: Project) {
+        ZenithApplicator.apply(target)
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
