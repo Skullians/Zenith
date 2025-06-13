@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 // Gradle plugin modules don't like libs or buildSrc conventions
 plugins {
     id("com.gradleup.shadow") version "9.0.0-beta15"
@@ -28,7 +30,7 @@ kotlin {
 }
 
 tasks {
-    shadowJar {
+    withType<ShadowJar> {
         archiveClassifier = ""
     }
 
@@ -36,12 +38,20 @@ tasks {
         dependsOn(shadowJar)
     }
 
-    jar {
+    withType<Jar> {
         manifest {
             attributes(
                 "Implementation-Version" to version,
             )
         }
+    }
+
+    withType<Javadoc> {
+        (options as StandardJavadocDocletOptions).tags(
+            "apiNote:a:API Note:",
+            "implSpec:a:Implementation Requirements:",
+            "implNote:a:Implementation Note:",
+        )
     }
 }
 
@@ -53,7 +63,7 @@ gradlePlugin {
     plugins {
         create("zenith") {
             id = "net.skullian.zenith"
-            implementationClass = "net.skullian.zenith.gradle.ZenithPlugin"
+            implementationClass = "net.skullian.zenith.ZenithPlugin"
             displayName = "Zenith"
             description = "Gradle Plugin for the Zenith utility library"
             tags = listOf("minecraft", "game")

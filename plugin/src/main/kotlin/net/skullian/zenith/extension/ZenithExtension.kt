@@ -1,6 +1,6 @@
-package net.skullian.zenith.gradle.extension
+package net.skullian.zenith.extension
 
-import net.skullian.zenith.gradle.model.ZenithModules
+import net.skullian.zenith.model.ZenithModules
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.model.ObjectFactory

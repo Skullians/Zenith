@@ -1,4 +1,4 @@
-package net.skullian.zenith.gradle.model
+package net.skullian.zenith.model
 
 public enum class ZenithModules {
     CORE,

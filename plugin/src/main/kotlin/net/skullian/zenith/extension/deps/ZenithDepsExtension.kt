@@ -1,6 +1,6 @@
-package net.skullian.zenith.gradle.extension.deps
+package net.skullian.zenith.extension.deps
 
-import net.skullian.zenith.gradle.platform.ZenithPaperPlatform
+import net.skullian.zenith.platform.ZenithPaperPlatform
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ExternalModuleDependencyBundle
@@ -36,10 +36,8 @@ public abstract class ZenithDepsExtension @Inject constructor(
         project.dependencies.add("compileOnly", bundleProvider)
     }
 
-    public fun paper(
+    public fun applyPaper(
         version: String,
         internals: Boolean = false,
-    ) {
-        ZenithPaperPlatform.apply(version, internals, project)
-    }
+    ): Unit = ZenithPaperPlatform.apply(version, internals, project)
 }

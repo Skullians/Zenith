@@ -1,4 +1,4 @@
-package net.skullian.zenith.gradle.model.library
+package net.skullian.zenith.model.library
 
 /**
  * Represents a maven dependency.

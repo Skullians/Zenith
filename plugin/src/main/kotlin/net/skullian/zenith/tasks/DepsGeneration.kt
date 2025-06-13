@@ -1,8 +1,8 @@
-package net.skullian.zenith.gradle.tasks
+package net.skullian.zenith.tasks
 
-import net.skullian.zenith.gradle.extension.ZenithExtension
-import net.skullian.zenith.gradle.model.library.ZenithLibrary
-import net.skullian.zenith.gradle.model.library.ZenithRepository
+import net.skullian.zenith.extension.ZenithExtension
+import net.skullian.zenith.model.library.ZenithLibrary
+import net.skullian.zenith.model.library.ZenithRepository
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
@@ -29,7 +29,7 @@ import javax.inject.Inject
  */
 public abstract class DepsGeneration @Inject constructor(
     private val output: File,
-    private val project: Project
+    project: Project
 ) : DefaultTask() {
 
     private data class ZenithLibraries(
@@ -59,7 +59,7 @@ public abstract class DepsGeneration @Inject constructor(
         val remapDependencies = configuration.dependencies
             .filterIsInstance<ExternalModuleDependency>()
             .associateBy { "${it.module.group}:${it.module.name}" }
-            .mapValues { it.value.attributes.getAttribute(ZenithExtension.REMAP_ATTRIBUTE) == true }
+            .mapValues { it.value.attributes.getAttribute(ZenithExtension.Companion.REMAP_ATTRIBUTE) == true }
 
         val artifacts = configuration.incoming.artifacts.artifacts
         logger.info("Resolving repository URLs for ${artifacts.size} dependencies.")
@@ -97,7 +97,7 @@ public abstract class DepsGeneration @Inject constructor(
 
             if (urlExists(candidateUrl)) {
                 logger.info("Resolved [${dependency.gavCoordinate()}] via [$candidateUrl]")
-                libraries.repositories.getOrPut(repository.name) { ZenithRepository.named(repository.name, baseUrl) }
+                libraries.repositories.getOrPut(repository.name) { ZenithRepository.Companion.named(repository.name, baseUrl) }
                     .libraries.add(dependency)
 
                 return

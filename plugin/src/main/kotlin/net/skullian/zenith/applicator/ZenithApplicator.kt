@@ -1,12 +1,13 @@
-package net.skullian.zenith.gradle.applicator
+package net.skullian.zenith.applicator
 
-import net.skullian.zenith.gradle.extension.ZenithExtension
-import net.skullian.zenith.gradle.extension.ZenithExtension.Companion.zenith
-import net.skullian.zenith.gradle.extension.deps.ZenithDependencies
-import net.skullian.zenith.gradle.extension.deps.ZenithDepsExtension
-import net.skullian.zenith.gradle.model.ZenithRepositories
-import net.skullian.zenith.gradle.tasks.DepsGeneration
-import net.skullian.zenith.gradle.tasks.YamlFiltering
+import net.skullian.zenith.extension.ZenithExtension
+import net.skullian.zenith.extension.ZenithExtension.Companion.zenith
+import net.skullian.zenith.extension.deps.ZenithDependencies
+import net.skullian.zenith.extension.deps.ZenithDepsExtension
+import net.skullian.zenith.model.ZenithRepositories
+import net.skullian.zenith.platform.ZenithPaperPlatform
+import net.skullian.zenith.tasks.DepsGeneration
+import net.skullian.zenith.tasks.YamlFiltering
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.internal.extensions.stdlib.capitalized
@@ -40,6 +41,12 @@ public object ZenithApplicator {
 
     public fun apply(compilation: KotlinCompilation<*>) {
         val project = compilation.project
+
+        project.dependencies.extensions.add(
+            "paper",
+        ) { version: String, internals: Boolean ->
+            ZenithPaperPlatform.apply(version, internals, project)
+        }
 
         val dependencyTaskName = "generateDependencies" + compilation.name.capitalized()
         val dependencyTaskOutput = compilation.output.resourcesDir.resolve("zenith-dependencies.json")

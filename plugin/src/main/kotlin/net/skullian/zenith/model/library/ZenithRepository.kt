@@ -1,4 +1,4 @@
-package net.skullian.zenith.gradle.model.library
+package net.skullian.zenith.model.library
 
 import org.intellij.lang.annotations.Pattern
 import org.intellij.lang.annotations.RegExp

@@ -1,11 +1,11 @@
-package net.skullian.zenith.gradle.extension.deps
+package net.skullian.zenith.extension.deps
 
+import net.skullian.zenith.extension.ZenithExtension
 import net.skullian.zenith.gradle.ZenithConstants
-import net.skullian.zenith.gradle.extension.ZenithExtension
 import org.gradle.api.Project
 
 public object ZenithDependencies {
-    private val prefix = "net.skullian.zenith";
+    private const val prefix = "net.skullian.zenith"
 
     public fun apply(
         project: Project,

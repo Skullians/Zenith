@@ -1,6 +1,6 @@
-package net.skullian.zenith.gradle
+package net.skullian.zenith
 
-import net.skullian.zenith.gradle.applicator.ZenithApplicator
+import net.skullian.zenith.applicator.ZenithApplicator
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
