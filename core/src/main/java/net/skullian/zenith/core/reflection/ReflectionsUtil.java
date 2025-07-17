@@ -33,6 +33,13 @@ public class ReflectionsUtil {
         this.reflections = new Reflections(config);
     }
 
+    public <T> List<Class<?>> getSubTypes(Class<T> type) {
+        return reflections
+                .get(subTypes(type))
+                .stream()
+                .toList();
+    }
+
     /**
      * Invokes all methods annotated with the specified annotation within the context of the configured reflections instance.
      * If the method is static, it will be invoked without a target instance.
@@ -109,7 +116,7 @@ public class ReflectionsUtil {
      * @param annotation the annotation class used to find subtypes
      * @return a query function for retrieving subtypes of classes annotated with the specified annotation
      */
-    private <T> QueryFunction<Store, Class<?>> subTypes(Class<T> annotation) {
+    public <T> QueryFunction<Store, Class<?>> subTypes(Class<T> annotation) {
         return Scanners.SubTypes
                 .with(annotation)
                 .as();

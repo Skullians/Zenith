@@ -4,6 +4,7 @@ library-version = "1.0.0"
 kotlin = "2.1.21"
 annotations = "26.0.2"
 reflections = "0.10.2"
+jackson = "2.19.1"
 
 # Plugins
 shadow = "9.0.0-beta15"
@@ -15,12 +16,14 @@ paperweight = "2.0.0-beta.17"
 [libraries]
 plugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 
+plugin-gradle-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 plugin-gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 plugin-gradle-kotlin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 plugin-gradle-paperweight = { module = "io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin", version.ref = "paperweight" }
 
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 
 [plugins]
 blossom = { id = "net.kyori.blossom", version.ref = "blossom" }

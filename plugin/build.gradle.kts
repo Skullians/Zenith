@@ -23,6 +23,9 @@ repositories {
 dependencies {
     implementation(libs.bundles.kotlin.plugin)
     implementation(libs.plugin.gradle.paperweight)
+    implementation(libs.jackson.dataformat.yaml) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
 }
 
 kotlin {

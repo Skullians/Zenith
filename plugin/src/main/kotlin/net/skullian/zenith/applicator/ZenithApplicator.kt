@@ -5,9 +5,10 @@ import net.skullian.zenith.extension.ZenithExtension.Companion.zenith
 import net.skullian.zenith.extension.deps.ZenithDependencies
 import net.skullian.zenith.extension.deps.ZenithDepsExtension
 import net.skullian.zenith.model.ZenithRepositories
-import net.skullian.zenith.platform.ZenithPaperPlatform
+import net.skullian.zenith.platform.paper.PaperPluginYml
+import net.skullian.zenith.platform.paper.ZenithPaperPlatform
+import net.skullian.zenith.platform.paper.tasks.PaperPluginGeneration
 import net.skullian.zenith.tasks.DepsGeneration
-import net.skullian.zenith.tasks.YamlFiltering
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.internal.extensions.stdlib.capitalized
@@ -48,12 +49,14 @@ public object ZenithApplicator {
             ZenithPaperPlatform.apply(version, internals, project)
         }
 
+        project.dependencies.extensions.add("paperYaml", PaperPluginYml(project))
+
         val dependencyTaskName = "generateDependencies" + compilation.name.capitalized()
         val dependencyTaskOutput = compilation.output.resourcesDir.resolve("zenith-dependencies.json")
         val dependencyTask = project.tasks.register(dependencyTaskName, DepsGeneration::class.java, dependencyTaskOutput)
 
-        val yamlTaskName = "filterYaml" + compilation.name.capitalized()
-        val yamlTask = project.tasks.register(yamlTaskName, YamlFiltering::class.java, compilation)
+        val yamlTaskName = "generatePluginYml" + compilation.name.capitalized()
+        val yamlTask = project.tasks.register(yamlTaskName, PaperPluginGeneration::class.java, compilation)
 
         project.tasks.withType(Jar::class.java) {
             dependsOn("processResources")

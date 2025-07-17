@@ -6,6 +6,7 @@ rootProject.name = "zenith"
 listOf(
     "bom",
     "core",
+    "core-kotlin"
 ).forEach { module ->
     include(":zenith-$module")
     project(":zenith-$module").projectDir = file(module)

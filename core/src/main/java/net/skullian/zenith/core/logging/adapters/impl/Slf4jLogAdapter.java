@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
- * A simple built-in log adapter for the Slf4j Logger.
+ * A simple built-in log adapter for the Slf4j {@link Logger}.
  */
 public class Slf4jLogAdapter implements LogAdapter {
 

@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A built-in logging adapter for the {@link Logger} class.
+ * A built-in logging adapter for the built-in Java {@link Logger} class.
  */
 public class JavaLogAdapter implements LogAdapter {
 

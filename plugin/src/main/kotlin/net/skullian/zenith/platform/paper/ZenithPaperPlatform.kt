@@ -1,4 +1,4 @@
-package net.skullian.zenith.platform
+package net.skullian.zenith.platform.paper
 
 import io.papermc.paperweight.userdev.PaperweightUser
 import io.papermc.paperweight.userdev.PaperweightUserDependenciesExtension
