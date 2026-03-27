@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 // Gradle plugin modules don't like libs or buildSrc conventions
 plugins {
-    id("com.gradleup.shadow") version "9.0.0-SNAPSHOT"
+    id("com.gradleup.shadow") version "9.4.1"
 
     alias(libs.plugins.gradle.publish)
     alias(libs.plugins.blossom)
