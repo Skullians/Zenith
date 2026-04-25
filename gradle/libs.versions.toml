@@ -1,10 +1,12 @@
 [versions]
 library-version = "1.1.0"
 
+paper = "1.21.11-R0.1-SNAPSHOT"
+
 kotlin = "2.3.21"
+jackson = "2.21.2"
 annotations = "26.1.0"
 reflections = "0.10.2"
-jackson = "2.21.2"
 
 # Plugins
 shadow = "9.4.1"
@@ -21,9 +23,12 @@ plugin-gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 plugin-gradle-kotlin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 plugin-gradle-paperweight = { module = "io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin", version.ref = "paperweight" }
 
-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
@@ -31,4 +36,5 @@ blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
 gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish" }
 
 [bundles]
+jackson = [ "jackson-module-kotlin", "jackson-dataformat-yaml" ]
 kotlin-plugin = [ "plugin-gradle-kotlin", "plugin-gradle-kotlin-api" ]

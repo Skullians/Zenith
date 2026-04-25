@@ -9,11 +9,11 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
-import org.gradle.internal.impldep.com.fasterxml.jackson.annotation.JsonGetter
-import org.gradle.internal.impldep.com.fasterxml.jackson.annotation.JsonIgnore
-import org.gradle.internal.impldep.com.fasterxml.jackson.annotation.JsonProperty
-import org.gradle.internal.impldep.com.fasterxml.jackson.databind.PropertyNamingStrategies
-import org.gradle.internal.impldep.com.fasterxml.jackson.databind.annotation.JsonNaming
+import com.fasterxml.jackson.annotation.JsonGetter
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 // https://github.com/PaperMC/Paper/blob/main/paper-server/src/main/java/io/papermc/paper/plugin/provider/configuration/PaperPluginMeta.java#L43-L68
 @Suppress("ktlint:standard:spacing-between-declarations-with-annotations")
@@ -28,7 +28,7 @@ public class PaperPluginYml(
     @Input public var name: String = project.rootProject.name
     @Input public var version: String = project.rootProject.version.toString()
     @Input public lateinit var main: String
-    @Input public var loader: String = "net.skullian.zenith.paper.loader.ZenithLibraryLoader"
+    @Input @Optional public var loader: String? = null // todo
     @Input public lateinit var apiVersion: String
 
     @Input @Optional public var bootstrapper: String? = null

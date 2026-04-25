@@ -1,8 +1,10 @@
 package net.skullian.zenith.core.flavor;
 
+import net.skullian.zenith.core.flavor.annotation.Close;
 import net.skullian.zenith.core.flavor.annotation.Configure;
 import net.skullian.zenith.core.flavor.annotation.IgnoreAutoScan;
 import net.skullian.zenith.core.flavor.annotation.Service;
+import net.skullian.zenith.core.flavor.annotation.inject.Inject;
 import net.skullian.zenith.core.flavor.binder.FlavorBinder;
 import net.skullian.zenith.core.flavor.binder.FlavorBinderContainer;
 import net.skullian.zenith.core.flavor.exception.FlavorException;
@@ -204,6 +206,8 @@ public class Flavor {
         if (singleton == null) return;
 
         for (Field field : clazz.getDeclaredFields()) {
+            if (!field.isAnnotationPresent(Inject.class)) continue;
+
             List<FlavorBinder<?>> bindersOfType = binders.stream()
                     .filter(it -> it.instance.getClass().isAssignableFrom(field.getType()))
                     .collect(Collectors.toList());
@@ -219,6 +223,7 @@ public class Flavor {
                 }
             }
 
+            if (bindersOfType.isEmpty()) continue;
             FlavorBinder<?> binder = bindersOfType.getFirst();
             boolean canAccess = field.canAccess(singleton);
 
@@ -255,6 +260,7 @@ public class Flavor {
 
         long duration = tracked(() -> configure.ifPresent(it -> {
             try {
+                it.setAccessible(true);
                 it.invoke(singleton);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new FlavorException("Failed to invoke configure method %s for class %s".formatted(it.getName(), clazz.getSimpleName()), e);
@@ -265,6 +271,35 @@ public class Flavor {
             options.getLogger().info("Configured service {} in {}ms", clazz.getSimpleName(), duration);
         } else {
             options.getLogger().info("Configured service {}", clazz.getSimpleName());
+        }
+    }
+
+    /**
+     * Invokes all services annotated with {@link net.skullian.zenith.core.flavor.annotation.Close}.
+     */
+    public void close() {
+        for (Map.Entry<Class<?>, Object> entry : services.entrySet()) {
+            final Optional<Method> close = Arrays.stream(entry.getKey().getDeclaredMethods())
+                .filter(it -> it.isAnnotationPresent(Close.class))
+                .findFirst();
+
+            final Service service = entry.getKey().getDeclaredAnnotation(Service.class);
+            options.getLogger().info("[{}] Shutting down...", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName());
+
+            long milli = tracked(() -> close.ifPresent(it -> {
+                try {
+                    it.setAccessible(true);
+                    it.invoke(null);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new FlavorException("Failed to invoke close method %s for class %s".formatted(it.getName(), entry.getKey().getSimpleName()), e);
+                }
+            }));
+
+            if (milli != -1L) {
+                options.getLogger().info("[{}] Shut down in {}ms", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName(), milli);
+            } else {
+                options.getLogger().info("[{}] Shut down", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName());
+            }
         }
     }
 
@@ -301,12 +336,17 @@ public class Flavor {
 
         try {
             singleton = instance.getDeclaredField("instance");
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Failed to fetch singleton instance for class %s! Do you have an accessible field (\"INSTANCE\" or \"instance\") containing a singleton of the class?"
+        } catch (NoSuchFieldException ignored) {
+            try {
+                singleton = instance.getDeclaredField("INSTANCE");
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException("Failed to fetch singleton instance for class %s! Do you have an accessible field (\"INSTANCE\" or \"instance\") containing a singleton of the class?"
                     .formatted(instance.getSimpleName()), e);
+            }
         }
 
         try {
+            singleton.setAccessible(true);
             return singleton.get(null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Failed to get value of singleton field %s for service class %s."

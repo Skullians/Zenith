@@ -18,8 +18,9 @@ public object ZenithDependencies {
 
         val version = ZenithConstants.ZENITH
         extension.modules.forEach { module ->
-            add("$prefix:zenith-$module:$version")
-            if (extension.kotlin.get()) add("$prefix:zenith-$module-kotlin:$version")
+            val name = module.name.lowercase()
+            add("$prefix:zenith-$name:$version")
+            if (extension.kotlin.get()) add("$prefix:zenith-$name-kotlin:$version")
         }
     }
 }

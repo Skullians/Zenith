@@ -23,9 +23,10 @@ repositories {
 dependencies {
     implementation(libs.bundles.kotlin.plugin)
     implementation(libs.plugin.gradle.paperweight)
-    implementation(libs.jackson.dataformat.yaml) {
+    implementation(libs.bundles.jackson) {
         exclude(group = "org.jetbrains.kotlin")
     }
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 kotlin {
@@ -98,6 +99,6 @@ publishing {
 
 sourceSets.main {
     blossom.kotlinSources {
-        property("zenithVersion", version.toString())
+        property("zenithVersion", libs.versions.library.version.get())
     }
 }

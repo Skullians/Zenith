@@ -10,8 +10,10 @@ import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.tasks.TaskAction
-import org.gradle.internal.impldep.com.google.gson.Gson
-import org.gradle.internal.impldep.com.google.gson.GsonBuilder
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.gradle.kotlin.dsl.get
 import java.io.File
 import java.io.FileWriter
@@ -28,20 +30,23 @@ import javax.inject.Inject
  * @author Preva1l
  */
 public abstract class DepsGeneration @Inject constructor(
-    private val output: File,
+    output: File,
     project: Project
 ) : DefaultTask() {
+    @OutputFile
+    public val output: File = output
 
     private data class ZenithLibraries(
         val repositories: MutableMap<String, ZenithRepository>,
     )
 
     private val libraries = ZenithLibraries(mutableMapOf())
-    
+
     private val configuration = project.configurations["zenithLibrary"]
+    @Internal
     public val repositories: List<MavenArtifactRepository> = (project.repositories + project.rootProject.repositories)
         .filterIsInstance<MavenArtifactRepository>()
-    
+
     private val gson: Gson = GsonBuilder()
         .disableHtmlEscaping()
         .create()
@@ -97,7 +102,7 @@ public abstract class DepsGeneration @Inject constructor(
 
             if (urlExists(candidateUrl)) {
                 logger.info("Resolved [${dependency.gavCoordinate()}] via [$candidateUrl]")
-                libraries.repositories.getOrPut(repository.name) { ZenithRepository.Companion.named(repository.name, baseUrl) }
+                libraries.repositories.getOrPut(repository.name) { ZenithRepository.named(repository.name, baseUrl) }
                     .libraries.add(dependency)
 
                 return

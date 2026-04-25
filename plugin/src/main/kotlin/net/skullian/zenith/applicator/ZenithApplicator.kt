@@ -22,7 +22,14 @@ public object ZenithApplicator {
     public fun apply(project: Project): Unit =
         with(project) {
             extensions.create("zenith", ZenithExtension::class.java)
+            extensions.add("plugin", PaperPluginYml(project))
+
             dependencies.extensions.create("zenith", ZenithDepsExtension::class.java, project)
+            dependencies.extensions.add(
+                "paper",
+            ) { version: String, internals: Boolean ->
+                ZenithPaperPlatform.apply(version, internals, project)
+            }
             configurations.create("zenithLibrary")
 
             repositories.mavenCentral()
@@ -43,27 +50,17 @@ public object ZenithApplicator {
     public fun apply(compilation: KotlinCompilation<*>) {
         val project = compilation.project
 
-        project.dependencies.extensions.add(
-            "paper",
-        ) { version: String, internals: Boolean ->
-            ZenithPaperPlatform.apply(version, internals, project)
-        }
-
-        project.dependencies.extensions.add("paperYaml", PaperPluginYml(project))
-
         val dependencyTaskName = "generateDependencies" + compilation.name.capitalized()
         val dependencyTaskOutput = compilation.output.resourcesDir.resolve("zenith-dependencies.json")
         val dependencyTask = project.tasks.register(dependencyTaskName, DepsGeneration::class.java, dependencyTaskOutput)
 
         val yamlTaskName = "generatePluginYml" + compilation.name.capitalized()
-        val yamlTask = project.tasks.register(yamlTaskName, PaperPluginGeneration::class.java, compilation)
+        val yamlTaskOutput = compilation.output.resourcesDir.resolve("paper-plugin.yml")
+        val yamlTask = project.tasks.register(yamlTaskName, PaperPluginGeneration::class.java, yamlTaskOutput, project)
 
-        project.tasks.withType(Jar::class.java) {
-            dependsOn("processResources")
-            dependsOn(dependencyTask)
-        }
-
-        project.tasks.withType(ProcessResources::class.java) {
+        val sourceSetName = compilation.defaultSourceSet.name
+        val processResourcesTaskName = if (sourceSetName == "main") "processResources" else "process" + sourceSetName.capitalized() + "Resources"
+        project.tasks.named(processResourcesTaskName, ProcessResources::class.java) {
             duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
             exclude("plugin.yml")
@@ -78,6 +75,11 @@ public object ZenithApplicator {
             doLast {
                 yamlTask.get().run()
             }
+        }
+
+        project.tasks.withType(Jar::class.java) {
+            dependsOn(processResourcesTaskName)
+            dependsOn(dependencyTask)
         }
     }
 }
