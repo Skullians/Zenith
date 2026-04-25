@@ -28,7 +28,7 @@ jobs:
         env:
           gradle.publish.key: ${{ secrets.GRADLE_KEY }}
           gradle.publish.secret: ${{ secrets.GRADLE_SECRET }}
-          repo_username: ${{ secrets.REPO_USERNAME }}
-          repo_password: ${{ secrets.REPO_PASSWORD }}
+          ORG_GRADLE_PROJECT_SkulliansRepoUsername: ${{ secrets.REPO_USERNAME }}
+          ORG_GRADLE_PROJECT_SkulliansRepoPassword: ${{ secrets.REPO_PASSWORD }}
         run: |
           ./gradlew publish

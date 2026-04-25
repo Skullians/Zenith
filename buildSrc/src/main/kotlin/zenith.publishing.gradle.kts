@@ -7,8 +7,8 @@ publishing {
 }
 
 fun RepositoryHandler.configureRepository() {
-    val user: String? = properties["repository_username"]?.toString() ?: System.getenv("repository_username")
-    val pw: String? = properties["repository_password"]?.toString() ?: System.getenv("repository_password")
+    val user: String? = project.findProperty("SkulliansRepoUsername") as? String
+    val pw: String? = project.findProperty("SkulliansRepoPassword") as? String
 
     if (user != null && pw != null) {
         maven("https://repo.skullian.com/releases/") {
