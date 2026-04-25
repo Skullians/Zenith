@@ -9,7 +9,7 @@ jackson = "2.19.1"
 # Plugins
 shadow = "9.0.0-rc1"
 dokka = "2.2.0"
-blossom = "2.1.0"
+blossom = "2.2.0"
 gradle-publish = "2.1.1"
 paperweight = "2.0.0-beta.17"
 
