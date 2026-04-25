@@ -1,5 +1,6 @@
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -12,11 +13,12 @@ plugins {
 
 tasks.withType<KotlinCompile> {
     explicitApiMode = ExplicitApiMode.Strict
+    compilerOptions.jvmTarget = JvmTarget.JVM_21
     compilerOptions.freeCompilerArgs.addAll(
         "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
         "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
         "-opt-in=kotlin.contracts.ExperimentalContracts",
-        "-Xcontext-receivers",
+        "-Xcontext-parameters",
     )
 }
 
