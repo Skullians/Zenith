@@ -28,7 +28,7 @@ tasks {
 
     withType<JavaCompile> {
         options.compilerArgs.add("-parameters")
-        options.fork()
+        options.isFork = true
         options.encoding = Charsets.UTF_8.name()
         options.release = 21
     }
