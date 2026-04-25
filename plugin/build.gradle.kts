@@ -1,11 +1,11 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-// Gradle plugin modules don't like libs or buildSrc conventions
 plugins {
-    id("com.gradleup.shadow") version "9.4.1"
+    `maven-publish`
 
     alias(libs.plugins.gradle.publish)
     alias(libs.plugins.blossom)
+    alias(libs.plugins.shadow)
 
     `kotlin-dsl`
     `embedded-kotlin`
@@ -75,25 +75,24 @@ gradlePlugin {
 }
 
 publishing {
-    repositories.configureRepository()
-}
+    repositories {
+        val user: String? = findProperty("SkulliansRepoUsername") as? String
+        val pw: String? = findProperty("SkulliansRepoPassword") as? String
 
-fun RepositoryHandler.configureRepository() {
-    val user: String? = properties["repository_username"]?.toString() ?: System.getenv("repository_username")
-    val pw: String? = properties["repository_password"]?.toString() ?: System.getenv("repository_password")
-
-    if (user != null && pw != null) {
-        maven("https://repo.skullian.com/releases/") {
-            name = "skullian-releases"
-            credentials {
-                username = user
-                password = pw
+        if (user != null && pw != null) {
+            maven("https://repo.skullian.com/releases/") {
+                name = "skullian-releases"
+                credentials {
+                    username = user
+                    password = pw
+                }
+            }
+        } else {
+            println("Using repository without credentials.")
+            maven("https://repo.skullian.com/releases/") {
+                name = "skullian-releases"
             }
         }
-
-        return
-    } else {
-        throw IllegalArgumentException("Missing credentials for repository.")
     }
 }
 
@@ -102,4 +101,3 @@ sourceSets.main {
         property("zenithVersion", version.toString())
     }
 }
-

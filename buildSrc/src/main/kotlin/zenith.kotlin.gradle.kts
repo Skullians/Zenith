@@ -1,3 +1,4 @@
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -13,7 +14,7 @@ plugins {
 
 tasks.withType<KotlinCompile> {
     explicitApiMode = ExplicitApiMode.Strict
-    compilerOptions.jvmTarget = JvmTarget.JVM_21
+    compilerOptions.jvmTarget = JvmTarget.JVM_25
     compilerOptions.freeCompilerArgs.addAll(
         "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
         "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
@@ -44,4 +45,8 @@ publishing {
             }
         }
     }
+}
+
+tasks.withType<PublishToMavenRepository> {
+    dependsOn(dokkaJar)
 }

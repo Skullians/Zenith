@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.skullian.zenith.Zenith
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 
 plugins {
     id("com.gradleup.shadow")
@@ -17,6 +19,12 @@ repositories {
     maven("https://maven.enginehub.org/repo")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
 tasks {
     withType<Jar> {
         manifest {
@@ -30,7 +38,15 @@ tasks {
         options.compilerArgs.add("-parameters")
         options.isFork = true
         options.encoding = Charsets.UTF_8.name()
-        options.release = 21
+        options.release = 25
+    }
+
+    withType<Javadoc> {
+        (options as StandardJavadocDocletOptions).tags(
+            "apiNote:a:API Note:",
+            "implSpec:a:Implementation Requirements:",
+            "implNote:a:Implementation Note:",
+        )
     }
 
     withType<ShadowJar> {
@@ -48,6 +64,7 @@ tasks {
     register<Jar>("generateJdoc") {
         group = JavaBasePlugin.DOCUMENTATION_GROUP
         archiveClassifier.set("javadoc")
+        dependsOn(tasks.javadoc)
         from(tasks.javadoc)
     }
 }
@@ -59,6 +76,10 @@ publishing {
             artifact(tasks["generateJdoc"])
         }
     }
+}
+
+tasks.withType<PublishToMavenRepository> {
+    dependsOn(tasks["generateJdoc"])
 }
 
 extensions.create("zenith", Zenith::class)

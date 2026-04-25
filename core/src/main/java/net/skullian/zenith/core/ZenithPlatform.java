@@ -6,7 +6,7 @@ import net.skullian.zenith.core.flavor.Flavor;
 
 /**
  * ZenithPlatform is an interface designed to represent the core platform functionality.
- * </p>
+ * <p>
  * This is implemented by ZenithPlugin, ZenithMod, etc., which you would extend.
  */
 public interface ZenithPlatform {
@@ -22,7 +22,7 @@ public interface ZenithPlatform {
 
     /**
      * Fetches the {@link EventBus} instance of this platform.
-     * </p>
+     * <p>
      * By default, all platform extensions will use {@link net.skullian.zenith.core.event.bus.impl.EventBusImpl},
      * however, feel free to implement your own.
      *
@@ -35,7 +35,7 @@ public interface ZenithPlatform {
     /**
      * Fetches the {@link Flavor} instance, allowing you to manage
      * service lifecycles and dependency injection.
-     * </p>
+     * <p>
      * Typically, you shouldn't need to access this yourself.
      * However, we expose it just in case.
      *
@@ -49,6 +49,9 @@ public interface ZenithPlatform {
      */
     void reload();
 
+    /**
+     * Holds the platform instance.
+     */
     class PlatformHolder {
         static ZenithPlatform platformInstance;
     }

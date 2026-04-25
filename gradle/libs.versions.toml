@@ -11,7 +11,7 @@ shadow = "9.4.1"
 dokka = "2.2.0"
 blossom = "2.2.0"
 gradle-publish = "2.1.1"
-paperweight = "2.0.0-beta.19"
+paperweight = "2.0.0-beta.21"
 
 [libraries]
 plugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
@@ -26,6 +26,7 @@ reflections = { module = "org.reflections:reflections", version.ref = "reflectio
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 
 [plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
 gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish" }
 
