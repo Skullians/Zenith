@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class Flavor {
 
     private final List<FlavorBinder<?>> binders = new ArrayList<>();
     private final Map<Class<?>, Object> services = new HashMap<>();
+    private final Map<Class<?>, Consumer<Object>> serviceLoaders = new HashMap<>();
 
     private final Map<Class<? extends Annotation>, BiConsumer<Method, Object>> scanners = new HashMap<>();
 
@@ -90,6 +92,18 @@ public class Flavor {
         Object service = services.get(clazz);
         if (service == null) throw new IllegalArgumentException("Service %s not found".formatted(clazz.getSimpleName()));
         return (T) service;
+    }
+
+    /**
+     * Registers a custom loader for a specific class type.
+     *
+     * @param clazz the class type for which the custom loader is being registered
+     * @param loader a Consumer that defines how to load or initialize instances of the specified class type.
+     * @param <T> the type of the class for which the custom loader is being registered
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void customLoader(final Class<T> clazz, final Consumer<T> loader) {
+        serviceLoaders.put(clazz, (Consumer<Object>) loader);
     }
 
     /**
@@ -180,14 +194,22 @@ public class Flavor {
                 }).reversed())
                 .toList();
 
-        for (Class<?> clazz : classes) {
-            try {
-                if (!clazz.isAnnotationPresent(IgnoreAutoScan.class)) {
-                    scanAndInject(clazz, objectInstance(clazz));
+        long milli = tracked(() -> {
+            for (Class<?> clazz : classes) {
+                try {
+                    if (!clazz.isAnnotationPresent(IgnoreAutoScan.class)) {
+                        scanAndInject(clazz, objectInstance(clazz));
+                    }
+                } catch (Exception e) {
+                    throw new FlavorException("Failed to start service %s".formatted(clazz.getSimpleName()), e);
                 }
-            } catch (Exception e) {
-                throw new FlavorException("Failed to start service %s".formatted(clazz.getSimpleName()), e);
             }
+        });
+
+        if (milli != -1L) {
+            options.getLogger().info("Injected services in {}ms", milli);
+        } else {
+            options.getLogger().info("Injected services");
         }
     }
 
@@ -238,19 +260,15 @@ public class Flavor {
             }
         }
 
-        for (Method method : clazz.getDeclaredMethods()) {
-            List<Annotation> annotations = Arrays.stream(method.getDeclaredAnnotations())
-                    .filter(it -> scanners.containsKey(it.getClass()))
-                    .toList();
-
-            for (Annotation annotation : annotations) {
-                scanners.get(annotation.getClass())
-                        .accept(method, singleton);
-            }
-        }
-
         boolean isServiceClass = clazz.isAnnotationPresent(Service.class);
         if (!isServiceClass) return;
+
+        for (Map.Entry<Class<?>, Consumer<Object>> entry : serviceLoaders.entrySet()) {
+            if (entry.getKey().isAssignableFrom(clazz)) {
+                entry.getValue().accept(singleton);
+                return;
+            }
+        }
 
         Optional<Method> configure = Arrays.stream(clazz.getDeclaredMethods())
                 .filter(it -> it.isAnnotationPresent(Configure.class))
@@ -278,28 +296,34 @@ public class Flavor {
      * Invokes all services annotated with {@link net.skullian.zenith.core.flavor.annotation.Close}.
      */
     public void close() {
-        for (Map.Entry<Class<?>, Object> entry : services.entrySet()) {
-            final Optional<Method> close = Arrays.stream(entry.getKey().getDeclaredMethods())
-                .filter(it -> it.isAnnotationPresent(Close.class))
-                .findFirst();
+        long milli = tracked(() -> {
+            for (Map.Entry<Class<?>, Object> entry : services.entrySet()) {
+                final Optional<Method> close = Arrays.stream(entry.getKey().getDeclaredMethods())
+                    .filter(it -> it.isAnnotationPresent(Close.class))
+                    .findFirst();
 
-            final Service service = entry.getKey().getDeclaredAnnotation(Service.class);
-            options.getLogger().info("[{}] Shutting down...", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName());
+                final Service service = entry.getKey().getDeclaredAnnotation(Service.class);
+                options.getLogger().info("[{}] Shutting down...", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName());
 
-            long milli = tracked(() -> close.ifPresent(it -> {
-                try {
-                    it.setAccessible(true);
-                    it.invoke(null);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new FlavorException("Failed to invoke close method %s for class %s".formatted(it.getName(), entry.getKey().getSimpleName()), e);
+                long length = tracked(() -> close.ifPresent(it -> {
+                    try {
+                        it.setAccessible(true);
+                        it.invoke(null);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new FlavorException("Failed to invoke close method %s for class %s".formatted(it.getName(), entry.getKey().getSimpleName()), e);
+                    }
+                }));
+
+                if (length != -1L) {
+                    options.getLogger().info("[{}] Shut down in {}ms", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName(), length);
+                } else {
+                    options.getLogger().info("[{}] Shut down", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName());
                 }
-            }));
-
-            if (milli != -1L) {
-                options.getLogger().info("[{}] Shut down in {}ms", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName(), milli);
-            } else {
-                options.getLogger().info("[{}] Shut down", !service.name().isEmpty() ? service.name() : entry.getKey().getSimpleName());
             }
+        });
+
+        if (milli != -1L) {
+            options.getLogger().info("Closed in %sms.".formatted(milli));
         }
     }
 
