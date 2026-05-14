@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class Flavor {
 
     private final FlavorOptions options;
-    private final ReflectionsUtil reflections;
+    public final ReflectionsUtil reflections;
 
     private final List<FlavorBinder<?>> binders = new ArrayList<>();
     private final Map<Class<?>, Object> services = new HashMap<>();

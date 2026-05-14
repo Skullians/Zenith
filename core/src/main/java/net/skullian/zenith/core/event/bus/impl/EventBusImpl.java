@@ -1,5 +1,6 @@
 package net.skullian.zenith.core.event.bus.impl;
 
+import net.skullian.zenith.core.event.Cancellable;
 import net.skullian.zenith.core.event.EventPriority;
 import net.skullian.zenith.core.event.ZenithEvent;
 import net.skullian.zenith.core.event.ZenithListener;
@@ -55,7 +56,7 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public void emit(ZenithEvent event) {
+    public boolean emit(ZenithEvent event) {
         for (EventPriority priority : EventPriority.values()) {
             for (Map.Entry<ZenithListener, List<Method>> entry : listeners.entrySet()) {
                 for (Method method : entry.getValue()) {
@@ -67,6 +68,8 @@ public class EventBusImpl implements EventBus {
                 }
             }
         }
+
+        return !(event instanceof Cancellable cancellable) || !cancellable.isCancelled();
     }
 
     private void invoke(Method method, ZenithListener listener, Object... args) {

@@ -53,6 +53,11 @@ public interface ZenithPlatform {
      * Holds the platform instance.
      */
     class PlatformHolder {
-        static ZenithPlatform platformInstance;
+        private static ZenithPlatform platformInstance;
+
+        public static void setInstance(ZenithPlatform platform) {
+            if (platformInstance != null) throw new IllegalStateException("Platform instance already set");
+            platformInstance = platform;
+        }
     }
 }

@@ -17,5 +17,6 @@ public interface EventBus {
 
     void unsubscribe(ZenithListener listener);
 
-    void emit(ZenithEvent event);
+    boolean emit(ZenithEvent event);
+
 }
