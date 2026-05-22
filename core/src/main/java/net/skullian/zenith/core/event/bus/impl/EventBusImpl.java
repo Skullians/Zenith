@@ -33,7 +33,7 @@ public class EventBusImpl implements EventBus {
     public void subscribe(ZenithListener listener) {
         List<Method> methods = new ArrayList<>();
 
-        for (Method method : listener.getClass().getMethods()) {
+        for (Method method : listener.getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(Subscribe.class)
                     && method.getParameters().length == 1
                     && ZenithEvent.class.isAssignableFrom(method.getParameters()[0].getType())) methods.add(method);
@@ -61,6 +61,8 @@ public class EventBusImpl implements EventBus {
 
                     if (annotation.priority() != priority) continue;
                     if (!method.getParameters()[0].getType().isAssignableFrom(event.getClass())) continue;
+                    if (annotation.ignoreCancelled() && event instanceof Cancellable cancellable && cancellable.isCancelled()) continue;
+
                     invoke(method, entry.getKey(), event);
                 }
             }
@@ -70,17 +72,13 @@ public class EventBusImpl implements EventBus {
     }
 
     private void invoke(Method method, ZenithListener listener, Object... args) {
-        method.setAccessible(true);
-
         try {
-            method.invoke(
-                    listener,
-                    args
-            );
+            method.setAccessible(true);
+            method.invoke(listener, args);
         } catch (InvocationTargetException e) {
-            logger.error("Failed to access method {} on listener {}, despite attempting to mark it accessible.", e, method.getName(), listener.getClass().getSimpleName());
+            logger.error("Failed to invoke method {} on listener {} ({}).", method.getName(), listener.getClass().getSimpleName(), e.getCause());
         } catch (IllegalAccessException e) {
-            logger.error("Failed to invoke method {} on listener {}.", e, method.getName(), listener.getClass().getSimpleName());
+            logger.error("Failed to access method {} on listener {}, despite attempting to mark it accessible.", method.getName(), listener.getClass().getSimpleName(), e);
         }
     }
 
