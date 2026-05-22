@@ -76,7 +76,7 @@ public class EventBusImpl implements EventBus {
             method.setAccessible(true);
             method.invoke(listener, args);
         } catch (InvocationTargetException e) {
-            logger.error("Failed to invoke method {} on listener {} ({}).", method.getName(), listener.getClass().getSimpleName(), e.getCause());
+            logger.error("Failed to invoke method {} on listener {}.", e.getCause(), method.getName(), listener.getClass().getSimpleName());
         } catch (IllegalAccessException e) {
             logger.error("Failed to access method {} on listener {}, despite attempting to mark it accessible.", method.getName(), listener.getClass().getSimpleName(), e);
         }
