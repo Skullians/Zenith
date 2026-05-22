@@ -231,7 +231,7 @@ public class Flavor {
             if (!field.isAnnotationPresent(Inject.class)) continue;
 
             List<FlavorBinder<?>> bindersOfType = binders.stream()
-                    .filter(it -> it.instance.getClass().isAssignableFrom(field.getType()))
+                    .filter(it -> field.getType().isAssignableFrom(it.instance.getClass()))
                     .collect(Collectors.toList());
 
             for (FlavorBinder<?> binder : bindersOfType) {

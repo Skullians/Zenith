@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 public class ZenithPlugin : KotlinCompilerPluginSupportPlugin {
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
-        ZenithApplicator.apply(kotlinCompilation)
         return kotlinCompilation.project.provider(::emptyList)
     }
 

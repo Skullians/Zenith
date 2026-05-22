@@ -14,6 +14,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.kotlin.dsl.get
 import java.io.File
 import java.io.FileWriter
@@ -64,12 +65,18 @@ public abstract class DepsGeneration @Inject constructor(
         val remapDependencies = configuration.dependencies
             .filterIsInstance<ExternalModuleDependency>()
             .associateBy { "${it.module.group}:${it.module.name}" }
-            .mapValues { it.value.attributes.getAttribute(ZenithExtension.Companion.REMAP_ATTRIBUTE) == true }
+            .mapValues { it.value.attributes.getAttribute(ZenithExtension.REMAP_ATTRIBUTE) == true }
 
         val artifacts = configuration.incoming.artifacts.artifacts
         logger.info("Resolving repository URLs for ${artifacts.size} dependencies.")
 
+        if (configuration.dependencies.filterIsInstance<ProjectDependency>().isNotEmpty()) {
+            logger.info("Skipping ${configuration.dependencies.filterIsInstance<ProjectDependency>().size} project dependencies.")
+        }
+
         artifacts.forEach { artifact ->
+            val displayName = artifact.id.componentIdentifier.displayName
+            if (displayName.startsWith("project ")) return@forEach
             resolveRepository(artifact, dependencies, remapDependencies)
         }
 

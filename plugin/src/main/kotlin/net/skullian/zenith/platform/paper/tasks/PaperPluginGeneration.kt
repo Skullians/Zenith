@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import net.skullian.zenith.extension.ZenithExtension
+import net.skullian.zenith.model.ZenithModules
 import net.skullian.zenith.platform.paper.PaperPluginYml
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
@@ -28,6 +30,12 @@ public abstract class PaperPluginGeneration @Inject constructor(
     @TaskAction
     public fun run() {
         val ymlStructure = project.extensions.getByType(PaperPluginYml::class) ?: return
+        val zenith = project.extensions.getByType(ZenithExtension::class)
+
+        if (ZenithModules.PAPER !in zenith.modules) {
+            logger.info("Skipping paper-plugin.yml generation for '${project.name}': PAPER module not enabled")
+            return
+        }
 
         val factory = YAMLFactory()
             .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)

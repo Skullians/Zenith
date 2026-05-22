@@ -21,17 +21,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Zenith's built-in implementation of {@link EventBus}.
  */
-@Service(
-        name = "Zenith EventBus"
-)
-@IgnoreAutoScan
+@Service(name = "Zenith EventBus")
 public class EventBusImpl implements EventBus {
     private static final EventBusImpl instance = new EventBusImpl();
 
     private final Map<ZenithListener, List<Method>> listeners = new ConcurrentHashMap<>();
 
-    @Inject
-    public Logger logger;
+    @Inject public Logger logger;
 
     @Override
     public void subscribe(ZenithListener listener) {
@@ -39,8 +35,8 @@ public class EventBusImpl implements EventBus {
 
         for (Method method : listener.getClass().getMethods()) {
             if (method.isAnnotationPresent(Subscribe.class)
-                    && method.getParameters().length != 1
-                    && method.getParameters()[0].getType().isAssignableFrom(ZenithEvent.class)) methods.add(method);
+                    && method.getParameters().length == 1
+                    && ZenithEvent.class.isAssignableFrom(method.getParameters()[0].getType())) methods.add(method);
         }
 
         if (methods.isEmpty()) throw new IllegalArgumentException("Could not find any public methods annotated with @Subscribe in listener " + listener.getClass().getSimpleName());
@@ -64,6 +60,7 @@ public class EventBusImpl implements EventBus {
                     if (annotation == null) continue; // this should never happen
 
                     if (annotation.priority() != priority) continue;
+                    if (!method.getParameters()[0].getType().isAssignableFrom(event.getClass())) continue;
                     invoke(method, entry.getKey(), event);
                 }
             }
