@@ -15,6 +15,7 @@ public abstract class ZenithExtension(
     public val modules: MutableList<ZenithModules> = mutableListOf()
     public val remap: Attribute<Boolean> = REMAP_ATTRIBUTE
     public val kotlin: Property<Boolean> = objects.property<Boolean>().convention(false)
+    public val generatePluginYml: Property<Boolean> = objects.property<Boolean>().convention(true)
 
     public fun modules(vararg modules: ZenithModules) {
         this.modules.addAll(modules)

@@ -4,6 +4,7 @@ import net.skullian.zenith.extension.ZenithExtension
 import net.skullian.zenith.extension.ZenithExtension.Companion.zenith
 import net.skullian.zenith.extension.deps.ZenithDependencies
 import net.skullian.zenith.extension.deps.ZenithDepsExtension
+import net.skullian.zenith.model.ZenithModules
 import net.skullian.zenith.model.ZenithRepositories
 import net.skullian.zenith.platform.paper.PaperPluginYml
 import net.skullian.zenith.platform.paper.ZenithPaperPlatform
@@ -52,6 +53,11 @@ public object ZenithApplicator {
 
         val yamlTask = tasks.register("generatePluginYml", PaperPluginGeneration::class.java,
             generatedDir.get().file("paper-plugin.yml").asFile, project)
+        yamlTask.configure {
+            onlyIf("PAPER module enabled and plugin yml generation not disabled") {
+                ZenithModules.PAPER in zenith.modules && zenith.generatePluginYml.get()
+            }
+        }
 
         plugins.withType(JavaPlugin::class.java) {
             extensions.getByType(SourceSetContainer::class.java).named(SourceSet.MAIN_SOURCE_SET_NAME) {
