@@ -26,7 +26,7 @@ dependencies {
     implementation(libs.bundles.jackson) {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.14.0")
 }
 
 kotlin {
