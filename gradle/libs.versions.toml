@@ -9,7 +9,7 @@ annotations = "26.1.0"
 reflections = "0.10.2"
 
 # Plugins
-shadow = "9.4.1"
+shadow = "9.6.1"
 dokka = "2.2.0"
 blossom = "2.2.0"
 gradle-publish = "2.1.1"
