@@ -4,7 +4,7 @@ library-version = "1.2.6"
 paper = "1.21.11-R0.1-SNAPSHOT"
 
 kotlin = "2.3.21"
-jackson = "2.21.2"
+jackson = "2.22.2"
 annotations = "26.1.0"
 reflections = "0.10.2"
 
